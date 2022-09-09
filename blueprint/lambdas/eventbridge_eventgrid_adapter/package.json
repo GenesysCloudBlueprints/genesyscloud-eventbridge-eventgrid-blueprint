@@ -1,0 +1,19 @@
+{
+    "name": "eventbridge_eventgrid_adapter",
+    "version": "0.0.1",
+    "description": "Builds a lambda that will map an AWS EventBridge message over to AWS Event Grid",
+    "main": "main.js",
+    "scripts": {
+        "build": "tsc && mkdir -p layers/nodejs && cp -rf node_modules layers/nodejs",
+        "clean": "rm -rf build/*.* && rm -rf dist/*.* && rm -rf layers/nodejs/*.*"
+    },
+    "devDependencies": {
+        "@types/aws-lambda": "^8.10.95",
+        "@types/node": "^17.0.31",
+        "aws-sdk": "^2.1127.0",
+        "typescript": "^4.8.3"
+    },
+    "dependencies": {
+        "@azure/eventgrid": "^4.10.0"
+    }
+}

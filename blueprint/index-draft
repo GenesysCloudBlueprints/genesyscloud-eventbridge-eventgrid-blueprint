@@ -1,0 +1,200 @@
+---
+title: Send Genesys Cloud events from AWS EventBridge to Azure EventGrid
+author: john.carnell
+indextype: blueprint
+icon: blueprint
+image: images/overview.png
+category: 5
+summary: |
+  This Genesys Cloud Developer Blueprint demonstrates proxy Genesys Cloud events from AWS EventBridge to Azure EventGrid.
+---
+This Genesys Cloud blueprint demonstrates how to pass Genesys Cloud events over to AWS EventBridge and then via an AWS Lambda, to Microsoft Azure's EventGrid.
+
+This blueprint also demonstrates how to:
+
+* Configure the Genesys Cloud/AWS EventBridge integration using CX as Code
+* Configure Azure to expose an EventGrid topic that will post the event to an Azure Queue using Hashicorp's Azure Terraform provider
+* Build and deploy a simple Typescript AWS lambda to proxy the request to an exposed Azure EventGrid endpoint
+
+
+## Scenario
+Genesys Cloud is an event-driven platform that can publish event occurring within the platform in near-time event-stream. Currently, there are two mechanisms to consume events from Genesys Cloud:
+
+1. [Notification Service](/notificationsalerts/notifications/). The notification service is a web-socket based API for listening to Genesys Cloud events. The notification service APIs are primarily used for near-time event processing in a UI-based integration like a dashboard or agent-based tool.
+2. [AWS EventBridge](/notificationsalerts/notifications/event-bridge). An enterprise-level AWS managed message bus that has high degrees of resiliency and scalability. This mechanism is primarily used for back-end, system-to-system style integrations.
+
+What happens if the majority of your development effort and infrastructure are in a cloud other then Amazon Web Service's cloud? While Genesys Cloud only supports native integration with AWS resources. How do you build a solution like this that minimize your AWS footprint and allow you to build in your own preferred cloud platform? Fortunately, it is relatively simple to build a proxy from AWS EventBridge over to your target cloud environment. 
+
+## Solution
+This blueprint will demonstrate how to use Genesys Cloud's AWS EventBridge integration along with an AWS Lambda to pass messages from Genesys Cloud over to Azure EventGrid. This blueprint will demonstrate how to use CX as Code and Terraform to provision the following infrastructure across Genesys Cloud, AWS, and Azure:
+
+1. **Genesys Cloud Integration for AWS EventBridge**. A Genesys Cloud integration sends Genesys Cloud events to AWS EventBridge. 
+2. **AWS EventBridge**. A managed message bus that receives messages from Genesys Cloud and routes them to an AWS target.
+3. **AWS Lambda**. A serverless function that takes a message from Genesys Cloud and puts it into a message format expected by Azure EventGrid. It then sends the message to Azure EventGrid.
+4. **Azure EventGrid**. An Azure implementation of a managed, message bus. The Azure EventGrid routes the 
+5. **Azure Queue**. An Azure message queues that will hold the Genesys Cloud events passed over to Azure EventGrid.
+
+Additionally, this blueprint explains how to deploy the AWS Lambda, all the AWS IAM roles, and all the CX as Code components from within a single Terraform/CX as Code project.  
+
+:::{"alert":"Warning","title":"This blueprint is not a turnkey solution","autoCollapse":false}
+This blueprint is meant to be an illustrative example of how to integrate Genesys Cloud, AWS and Azure capabilities.  It is not meant to be a turnkey solution that is resilient and secure. It it your responsibility as the executor of this blueprint to ensure that the error handling and security of this blueprint matches the over all needs of your organization.
+:::
+
+## Solution components
+
+* **Genesys Cloud CX** - A suite of Genesys Cloud services for enterprise-grade communications, collaboration, and contact center management. In this solution, you use an Architect bot, Architect message flow, a Genesys Cloud integration, data action, queues, and a web messaging widget.
+* **CX as Code** - A Genesys Cloud Terraform provider that provides an interface for declaring core Genesys Cloud objects.
+* **AWS Terraform Provider** - An Amazon-supported Terrform provider that provides an interface for declaring Amazon Web Services infrastructure resources.
+* **Amazon Web Services (AWS) Cloud** - A set of cloud computing capabilities managed by Amazon. Genesys Cloud events can be sent to AWS EventBridge.
+* **Microsoft Azure Cloud** - A set of cloud computing capabilities managed by Microsoft. 
+
+ ## Software development kits
+
+No Genesys Cloud SDKs are needed for this blueprint solution. However, if you want to make changes to the AWS Lambda, you will need the Node runtime and Typescript programming language installed. For the latest node installation, go to the [node](https://nodejs.org/en/) website. For the latest Typescript installation go to the Typescript [website](https://www.typescriptlang.org/)
+
+By default, the Terraform files will deploy a pre-compiled AWS lambda. The source code for the AWS Lambda is available in this blueprint and if you want to make changes to the AWS Lambda see [Optionally update the AWS Lambda](#optionally-update-the-aws-lambda "Goes to the Optionally update the AWS Lambda section").
+
+
+## Prerequisites
+
+### Specialized knowledge
+
+* Administrator-level knowledge of Genesys Cloud
+* AWS Cloud Practitioner-level knowledge of AWS IAM, AWS EventBridge, and AWS Lambda
+* Azure Cloud Practitioner-level knowledge of Azure EventGrid, Azure Storage, and Azure 
+* Experience with Terraform
+* A working knowledge of Node and Typescript
+
+### Genesys Cloud account
+
+* A Genesys Cloud license. For more information see, [Genesys Cloud Pricing](https://www.genesys.com/pricing "Opens the Genesys Cloud pricing page") in the Genesys website. 
+* Master Admin role. For more information see, [Roles and permissions overview](https://help.mypurecloud.com/?p=24360 "Goes to the Roles and permissions overview article") in the Genesys Cloud Resource Center.
+* CX as Code. For more information see, [CX as Code](https://developer.genesys.cloud/api/rest/CX-as-Code/ "Goes to the CX as Code page") in the Genesys Cloud Developer Center.
+
+### AWS account
+
+* An administrator account with permissions to access these services:
+  * AWS Identity and Access Management (IAM)
+  * AWS EventBridge
+  * AWS Lambda
+  * AWS credentials
+
+### Azure account
+
+* An administrator account with permissions to access these services:
+  * Azure Security
+  * Azure EventGrid
+  * Azure Storage
+  * Azure Queue
+  * Azure credentials  
+
+### Development tools running in your local environment
+
+* Terraform (the latest binary). For more information, see [Download Terraform](https://www.terraform.io/downloads.html "Goes to the Download Terraform page") on the Terraform website.
+* Typescript 4.6.3 or higher. For more information, see [Downloads]((https://www.typescriptlang.org/ "Goes to the Typescript Downloads page") on the Typescript website.
+* Node 17.9.0 or higher. For more information, see [Downloads](https://nodejs.org/en/ "Goes to the Node page") on the node website.
+
+
+## Implementation steps
+
+### Clone the GitHub repository
+
+Clone the [deploy-evenbridge-eventgrid-blueprint](//TODO Add URL) GitHub repository on your local machine. The `deploy-evenbridge-eventgrid-blueprint` folder includes solution-specific scripts and files in these subfolders:
+
+* `blueprint/lambdas/eventbridge_eventgrid_adapter` - Source code for the AWS Lambda used in this application
+* `terraform` - All Terraform files flows that are needed to deploy the solution.
+
+### Set up your AWS credentials
+
+For information about setting up your AWS credentials on your local machine, see [Configuration](https://docs.aws.amazon.com/sdkref/latest/guide/creds-config-files.html "Goes to the Configuration page") on the AWS website.
+
+### Set up your Azure credentials
+
+For information about setting up your Azure credentials on your local machine, see [Configuration](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli "Goes to the Configuration page"). 
+
+:::{"alert":"primary","title":"Authenticating with the Terraform provider","autoCollapse":false}
+In order to use the Terraform provider with Azure, you will need to create a service principal with a client secret. Instructions for doing doing this can be found in this Terraform [article](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/service_principal_client_secret).
+:::
+
+
+### Set up your Genesys Cloud credentials
+
+1. To run this project using the CX as Code, AWS Terraform provider, and Azure Terraform provider, open a Terminal window and set the following environment variables:
+
+ * `GENESYSCLOUD_OAUTHCLIENT_ID` - This is the Genesys Cloud client credential grant Id that CX as Code executes against. 
+ * `GENESYSCLOUD_OAUTHCLIENT_SECRET` - This is the Genesys Cloud client credential secret that CX as Code executes against. 
+ * `GENESYSCLOUD_REGION` - This is the Genesys Cloud region in your organization.
+ * `AWS_ACCESS_KEY_ID` - This is the AWS Access Key you must set up in your Amazon account to allow the AWS Terraform provider to act against your account.
+ * `AWS_SECRET_ACCESS_KEY` - This is the AWS Secret you must set up in your Amazon account to allow the AWS Terraform provider to act against your account.
+ * `CLIENT_ID` - This is the Azure Access Key you must setup in your Azure account to allow the Azure Terraform provider to act against your account.
+ * `CLIENT_SECRET` - This is the Azure Secret you must setup in your Azure account to allow the Azure Terraform provider to act against your account.
+ * `TENANT_ID` - This is the Azure Tenant id for your Azure account.
+
+2. Run Terraform in the Terminal window where you set the environment variables.
+
+:::primary
+**Note:** For this project, the Genesys Cloud OAuth client requires the Master Admin role. 
+:::
+
+### Configure your Terraform build
+
+You must define several values that are specific to your AWS region and Genesys Cloud organization.
+
+In the `blueprint/terraform/dev.auto.tfvars` file, set the following values:
+
+* `aws_region` - The AWS region your AWS Event Bus is going to run in.
+* `aws_account_id` - The AWS account identifier of your AWS account.
+* `event_bus_name` - The name you want to call the AWS EventBus the Terraform code will create on your behalf.
+* `genesys_cloud_organization_id` - The numeric Genesys Cloud organization id.
+* `genesys_cloud_event_bridge_topic_filters` - A list of Genesys Cloud events you want passed to the EventBridge. A list of available events can be found [here](/notificationsalerts/notifications/available-topics). Make sure filter on "Event Bridge"
+
+The following is an example of the `dev.auto.tfvars` file that was created by the author of this blueprint.
+
+```
+aws_region              = "us-west-2"
+aws_account_id          = "435589934475"
+event_bus_name          = "genesys-carnell1"
+genesys_cloud_organization_id = "011a0480-9888-4111-8222-2333474cf92a"
+genesys_cloud_event_bridge_topic_filters = ["v2.users.{id}.presence"]
+```
+
+:::{"alert":"primary","title":"The above values are examples only","autoCollapse":false}
+Make sure you do not just cut-and-paste the above values.  They are specific to your organization.
+:::
+
+### Run Terraform
+
+You are now ready to run this blueprint solution for your organization. 
+
+1. Change to the `blueprints/terraform` folder and issue these commands:
+
+* `terraform plan` - This executes a trial run against your Genesys Cloud organization and shows you a list of all the AWS, and Genesys Cloud resources created. Review this list and make sure you are comfortable with the activity being undertaken before continuing.
+
+* `terraform apply --auto-approve` - This does the actual object creation and deployment against your AWS and Genesys Cloud accounts. After the --auto--approve commands complete, you should see the approval step required before creating the objects.
+
+After the `terraform apply --auto-approve` command completes, you should see the output of the entire run along with the number of objects successfully created by Terraform. Keep these points in mind:
+
+*  This project assumes you are running using a local Terraform backing state. This means that the `tfstate` files will be created in the same folder where you ran the project. Terraform does not recommend using local Terraform backing state files unless you run from a desktop and are comfortable with the deleted files.
+
+* As long as your local Terraform backing state projects are kept, you can tear down the blueprint in question by changing to the `blueprint/terraform` folder and issuing a `terraform destroy --auto-approve` command. This destroys all objects currently managed by the local Terraform backing state.
+
+### Test your deployment
+Let's go ahead and provide what a test should look like. Let's deploy the blueprint and send across v2.users.{id}.presence events.
+
+1.  Log into your Genesys Cloud organization.
+2.  Change your presence several times to something other then available (e.g. Busy, Away, Break, Meal, etc....)
+3.  Log into your Microsoft Azure account.
+4.  Locate `Event Grid|Topics->genesyscloudtopic`.
+5.  Locate `genesyseventsubscription` and click on the link.
+6.  Locate `genesyseventqueue` and click on the the link,
+7.  For the `genesyseventstorage` object, locate the Data storage->Queues link.
+8.  Locate the `genesyseventqueue` and click on it.
+9.  You now see a table of Genesys Cloud events that have been passed over from Genesys Cloud.  Clicking on the ID of an event will display the event in detail.
+
+## Additional resources
+* [Genesys Cloud AWS EventBridge Technical Documentation](/notificationsalerts/notifications/event-bridge "Opens the Genesys Cloud AWS EventBridge Document") in the Genesys Cloud Developer Center
+* [AWS EventBridge Documentation](https://docs.aws.amazon.com/eventbridge/?id=docs_gateway "Opens the AWS EventBridge documentation") in the AWS Documentation Center
+* [Azure Event Grid Documentation](https://docs.microsoft.com/en-us/azure/event-grid/ "Opens the Microsoft Azure documentation") in the Azure Microsoft Documentation Center
+* [Event Driven Integrations in Genesys Cloud](/blog/2021-12-02-Event-Streaming-In-Action/ "Goes to the Event Driven Integrations blog post") in Genesys Cloud Developer Center
+* [DevDrop #15: Introducing the Genesys Cloud AWS EventBridge Integration](https://www.youtube.com/watch?v=1uqEUpFtk8Q&t=402s "Goes to the Introducing the Genesys AWS EventBridge Integration DevDrop") in Genesys Cloud's YouTube Channel
+
