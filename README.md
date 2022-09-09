@@ -1,4 +1,4 @@
-# Send Genesys Cloud events from AWS EventBridge to Azure EventGrid
+# Send Genesys Cloud events from AWS EventBridge to Azure EventGrid (DRAFT)
 This Genesys Cloud blueprint demonstrates how to pass Genesys Cloud events over to AWS EventBridge and then via an AWS Lambda, to Microsoft Azure's EventGrid.
 
 This blueprint also demonstrates how to:
