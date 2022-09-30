@@ -138,24 +138,57 @@ In order to use the Terraform provider with Azure, you will need to create a ser
 
 ### Configure your Terraform build
 
-You must define several values that are specific to your AWS region and Genesys Cloud organization.
+You must define several Terraform input variables that are specific to your Genesys Cloud, AWS and Azure account configuration.
 
-In the `blueprint/terraform/dev.auto.tfvars` file, set the following values:
+The following Terraform input variables must be defined:
 
 * `aws_region` - The AWS region your AWS Event Bus is going to run in.
 * `aws_account_id` - The AWS account identifier of your AWS account.
 * `event_bus_name` - The name you want to call the AWS EventBus the Terraform code will create on your behalf.
 * `genesys_cloud_organization_id` - The numeric Genesys Cloud organization id.
 * `genesys_cloud_event_bridge_topic_filters` - A list of Genesys Cloud events you want passed to the EventBridge. A list of available events can be found [here](/notificationsalerts/notifications/available-topics). Make sure filter on "Event Bridge"
+*  `azure_storage_account_name` - A globally unique name for your azure storage account that will hold your message queue.
+*  `azure_storage_queue_name` - A globally unique queue name for the message queue
 
-The following is an example of the `dev.auto.tfvars` file that was created by the author of this blueprint.
+These values can be passed into via the terraform command, via a Terraform autovars file, or via environment variables.  A skeleton `setup.sh` (for *nix and OS X) and a 
+`setup.bat` can be found in the Terraform directory. If you file in the variables and run the `setup.sh` or `setup.bat` file you will be able to launch this terraform project against your own environments. 
+
+The following is an example of a `setup.sh` file the author used while building this project..
 
 ```
-aws_region              = "us-west-2"
-aws_account_id          = "435589934475"
-event_bus_name          = "genesys-carnell1"
-genesys_cloud_organization_id = "011a0480-9888-4111-8222-2333474cf92a"
-genesys_cloud_event_bridge_topic_filters = ["v2.users.{id}.presence"]
+# CX AS CODE PROVIDER-CONFIG 
+export GENESYSCLOUD_OAUTHCLIENT_ID="3myb45d2-ate32-4709-a652-DUMMYCLIENTID"
+export GENESYSCLOUD_OAUTHCLIENT_SECRET="dummyWqwOoauthWEo0PC2iKu22Owsecret"
+export GENESYSCLOUD_REGION="us-west-2"
+
+# Azure Provider Environment variables
+export CLIENT_ID=dummy478-bd88-azureclient-bbb8-6f211f9867678a
+export CLIENT_SECRET=LdummyPErU6yfazureclientsecrets.4gUJ36JY0r4dtf
+export TENANT_ID=dummy6fd-azure0fc5-tenant-a6bd-8bssdf32947
+
+# AWS Provider Environment variables
+export AWS_ACCESS_KEY_ID="ASdummy_aws_keyB4FPddfsd"
+export AWS_SECRET_ACCESS_KEY="xdsfsdfsdm2fasdgsdfgsdfgewrtewrtdsfgsdfgds"
+
+# AWS_SESSION_TOKEN is only needed you are using two factor authentication
+export AWS_SESSION_TOKEN="TOKEN"
+
+# Configuration the terraform resources need to setup the integration
+export TF_VAR_aws_region="us-west-2"
+export TF_VAR_aws_account_id="435681138675"     #Your AWS Account Id
+export TF_VAR_event_bus_name="genesys-carnell1"
+export TF_VAR_genesys_cloud_organization_id="011a0480-9a1e-4da9-8cdd-2642474cf92a"   # Your Genesys Cloud Org Id
+export TF_VAR_genesys_cloud_event_bridge_topic_filters='["v2.users.{id}.presence"]'  # Note how array of events are positioned
+export TF_VAR_azure_storage_account_name="genesyseventstorage"
+export TF_VAR_azurerm_storage_queue_name="genesyseventqueuejcc"
+
+# Running a terraform plan
+echo "Running Terraform plan and saving to myplan file.  Note: This plan file is in a binary encoded format and is not readable in a text editor"
+echo "------------------------------------------------------"
+terraform plan -out=myplan
+echo "------------------------------------------------------"
+echo "To apply your changes run terraform apply.  You will be prompted to approve the changes before deployment. " 
+echo "To deploy without auto-approval run terraform apply --auto-approve"
 ```
 
 :::{"alert":"primary","title":"The above values are examples only","autoCollapse":false}
@@ -167,6 +200,8 @@ Make sure you do not just cut-and-paste the above values.  They are specific to 
 You are now ready to run this blueprint solution for your organization. 
 
 1. Change to the `blueprints/terraform` folder and issue these commands:
+
+* Run the `setup.sh`  and `setup.bat` command from the command prompt (e.g. linux or windows`. ./setup.sh`).  The script will only execute a Terraform plan.  However, all of the environment variables will be set in your shell so will then be able to perform any terraform commands you need
 
 * `terraform plan` - This executes a trial run against your Genesys Cloud organization and shows you a list of all the AWS, and Genesys Cloud resources created. Review this list and make sure you are comfortable with the activity being undertaken before continuing.
 
