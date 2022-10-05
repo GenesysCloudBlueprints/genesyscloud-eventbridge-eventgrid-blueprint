@@ -10,7 +10,7 @@ resource "azurerm_storage_account" "genesyseventstorage" {
 
 ///Create a queue for the storage
 resource "azurerm_storage_queue" "genesyseventqueue" {
-  name                 = "genesyseventqueue"
+  name                 = var.azurerm_storage_queue_name
   storage_account_name = azurerm_storage_account.genesyseventstorage.name
 }
 

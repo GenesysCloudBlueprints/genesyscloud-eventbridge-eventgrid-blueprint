@@ -90,7 +90,7 @@ By default, the Terraform files will deploy a pre-compiled AWS lambda. The sourc
 
 ### Development tools running in your local environment
 
-* Terraform (the latest binary). For more information, see [Download Terraform](https://www.terraform.io/downloads.html "Goes to the Download Terraform page") on the Terraform website.
+* Terraform (v1.1.8 or higher). For more information, see [Download Terraform](https://www.terraform.io/downloads.html "Goes to the Download Terraform page") on the Terraform website.
 * Typescript 4.6.3 or higher. For more information, see [Downloads]((https://www.typescriptlang.org/ "Goes to the Typescript Downloads page") on the Typescript website.
 * Node 17.9.0 or higher. For more information, see [Downloads](https://nodejs.org/en/ "Goes to the Node page") on the node website.
 
@@ -99,7 +99,7 @@ By default, the Terraform files will deploy a pre-compiled AWS lambda. The sourc
 
 ### Clone the GitHub repository
 
-Clone the [deploy-evenbridge-eventgrid-blueprint](//TODO Add URL) GitHub repository on your local machine. The `deploy-evenbridge-eventgrid-blueprint` folder includes solution-specific scripts and files in these subfolders:
+Clone the [deploy-evenbridge-eventgrid-blueprint](https://github.com/GenesysCloudBlueprints/genesyscloud-eventbridge-eventgrid-blueprint) GitHub repository on your local machine. The `deploy-evenbridge-eventgrid-blueprint` folder includes solution-specific scripts and files in these subfolders:
 
 * `blueprint/lambdas/eventbridge_eventgrid_adapter` - Source code for the AWS Lambda used in this application
 * `terraform` - All Terraform files flows that are needed to deploy the solution.
@@ -130,7 +130,7 @@ In order to use the Terraform provider with Azure, you will need to create a ser
  * `CLIENT_SECRET` - This is the Azure Secret you must setup in your Azure account to allow the Azure Terraform provider to act against your account.
  * `TENANT_ID` - This is the Azure Tenant id for your Azure account.
 
-2. Run Terraform in the Terminal window where you set the environment variables.
+2. Run all required Terraform commands from the terminal window where you set the environment variables
 
 :::primary
 **Note:** For this project, the Genesys Cloud OAuth client requires the Master Admin role. 
@@ -199,9 +199,9 @@ Make sure you do not just cut-and-paste the above values.  They are specific to 
 
 You are now ready to run this blueprint solution for your organization. 
 
-1. Change to the `blueprints/terraform` folder and issue these commands:
+Change to the `blueprints/terraform` and un the `setup.sh`  and `setup.bat` command from the command prompt (e.g. linux or windows`. ./setup.sh`).  The script will only execute a Terraform plan.  However, all of the environment variables will be set in your shell so will then be able to perform any Terraform commands you need from that terminal window.  Some Terraform commands you could run include:
 
-* Run the `setup.sh`  and `setup.bat` command from the command prompt (e.g. linux or windows`. ./setup.sh`).  The script will only execute a Terraform plan.  However, all of the environment variables will be set in your shell so will then be able to perform any terraform commands you need
+* `terraform init` - This initializes your Terraform project by pulling down the CX as Code, AWS, and Azure providers along with any Terraform remote modules used in project.  Note:  `terraform init` is idempotent and can be run multiple teams even if the project is already initialized.
 
 * `terraform plan` - This executes a trial run against your Genesys Cloud organization and shows you a list of all the AWS, and Genesys Cloud resources created. Review this list and make sure you are comfortable with the activity being undertaken before continuing.
 

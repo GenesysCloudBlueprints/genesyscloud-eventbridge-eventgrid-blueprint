@@ -27,6 +27,7 @@ export TF_VAR_azurerm_storage_queue_name=""
 # Running a terraform plan
 echo "Running Terraform plan and saving to myplan file.  Note: This plan file is in a binary encoded format and is not readable in a text editor"
 echo "------------------------------------------------------"
+terraform init
 terraform plan -out=myplan
 echo "------------------------------------------------------"
 echo "To apply your changes run terraform apply.  You will be prompted to approve the changes before deployment. " 
