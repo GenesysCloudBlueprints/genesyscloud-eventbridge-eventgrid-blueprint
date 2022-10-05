@@ -1,7 +1,7 @@
 
 //Create an event storage
 resource "azurerm_storage_account" "genesyseventstorage" {
-  name                     = "genesyseventstorage"
+  name                     = var.azure_storage_account_name
   resource_group_name    = azurerm_resource_group.eventbridge_eventgrid_resource.name
   location               = azurerm_resource_group.eventbridge_eventgrid_resource.location
   account_tier             = "Standard"
@@ -10,7 +10,7 @@ resource "azurerm_storage_account" "genesyseventstorage" {
 
 ///Create a queue for the storage
 resource "azurerm_storage_queue" "genesyseventqueue" {
-  name                 = "genesyseventqueue"
+  name                 = var.azurerm_storage_queue_name
   storage_account_name = azurerm_storage_account.genesyseventstorage.name
 }
 

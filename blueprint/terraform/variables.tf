@@ -24,3 +24,14 @@ variable "genesys_cloud_event_bridge_topic_filters" {
   description = "List of Genesys Cloud events you want to sent to AWS event bridge"
 }
 
+variable "azure_storage_account_name" {
+  type        = string
+  description = "Name of the Azure storage account that will be used to hold the topic that event grid will write too.  This must be globally uniqueß"
+}
+
+variable "azurerm_storage_queue_name" {
+  type        = string
+  description = "Name of the Azure queue that values sent from AWS eventbridge to Azure eventgrid.  This must be globally uniqueß"
+}
+
+

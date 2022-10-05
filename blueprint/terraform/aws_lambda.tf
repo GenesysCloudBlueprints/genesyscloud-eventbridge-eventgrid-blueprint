@@ -1,26 +1,26 @@
 //Builds the lambda
-//resource "null_resource" "compile_lambda" {
-//  provisioner "local-exec" {
-//    command = " pwd && cd ../lambdas/eventbridge_eventgrid_adapter && npm run clean && npm install && npm run build"
-//  }
-//}
+resource "null_resource" "compile_lambda" {
+  provisioner "local-exec" {
+    command = " pwd && cd ../lambdas/eventbridge_eventgrid_adapter && npm run clean && npm install && npm run build"
+  }
+}
 
-//resource "null_resource" "build_layer" {
-//  provisioner "local-exec" {
-//    command = "cd ../lambdas/eventbridge_eventgrid_adapter && npm run clean && npm install && npm run build"
-//  }
-//}
+resource "null_resource" "build_layer" {
+  provisioner "local-exec" {
+    command = "cd ../lambdas/eventbridge_eventgrid_adapter && npm run clean && npm install && npm run build"
+  }
+}
 
 //Builds the zip file
 data "archive_file" "lambda_zip" {
-//  depends_on  = [null_resource.compile_lambda]
+  depends_on  = [null_resource.compile_lambda]
   type        = "zip"
   source_dir = "../lambdas/eventbridge_eventgrid_adapter/build"
   output_path = "../lambdas/eventbridge_eventgrid_adapter/dist/adapter.zip"
 }
 
 data "archive_file" "lambda_layer_zip" {
-//  depends_on  = [null_resource.compile_lambda]
+depends_on  = [null_resource.compile_lambda]
   type        = "zip"
   source_dir = "../lambdas/eventbridge_eventgrid_adapter/layers"
   output_path = "../lambdas/eventbridge_eventgrid_adapter/dist/node_modules.zip"

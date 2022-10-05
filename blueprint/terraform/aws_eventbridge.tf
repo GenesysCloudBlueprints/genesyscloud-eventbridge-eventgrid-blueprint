@@ -13,7 +13,7 @@ data "aws_cloudwatch_event_source" "genesys_event_bridge" {
   depends_on = [
     module.AwsEventBridgeIntegration
   ]
-  name_prefix = "aws.partner/genesys.com/cloud/${var.genesys_cloud_organization_id}/${var.event_bus_name}"  
+  name_prefix = "aws.partner/genesys.com/cloud/${var.genesys_cloud_organization_id}/${var.event_bus_name}"
 }
 
 resource "aws_cloudwatch_event_bus" "genesys_audit_event_bridge" {
