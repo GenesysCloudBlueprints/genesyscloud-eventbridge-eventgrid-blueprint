@@ -1,4 +1,4 @@
-# Send Genesys Cloud events from AWS EventBridge to Azure EventGrid (DRAFT)
+# Send Genesys Cloud events from AWS EventBridge to Azure EventGrid
 
 View the [Send Genesys Cloud events from AWS EventBridge to Azure EventGrid](https://github.com/GenesysCloudBlueprints/genesyscloud-eventbridge-eventgrid-blueprint "Send Genesys Cloud events from AWS EventBridge to Azure EventGrid"). 
 
