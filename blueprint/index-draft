@@ -8,6 +8,13 @@ category: 5
 summary: |
 This blueprint demonstrates how to use Genesys Cloud's AWS EventBridge integration and an AWS Lambda to pass messages from Genesys Cloud over to Azure EventGrid. You can deploy the AWS Lambda, all the AWS IAM roles, and all the CX as Code components from within a single Terraform/CX as Code project.
 ---
+:::{"alert":"primary","title":"About Genesys Cloud Blueprints","autoCollapse":false} 
+Genesys Cloud blueprints were built to help you jump-start building an application or integrating with a third-party partner. 
+Blueprints are meant to outline how to build and deploy your solutions, not a production-ready turn-key solution.
+ 
+For more details on Genesys Cloud blueprint support and practices 
+please see our Genesys Cloud blueprint [FAQ](https://developer.genesys.cloud/blueprints/faq)sheet.
+:::
 
 ![Send Genesys Cloud events from AWS EventBridge to Azure EventGrid](blueprint/images/overview.png "Send Genesys Cloud events from AWS EventBridge to Azure EventGrid")
 
