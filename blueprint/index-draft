@@ -22,7 +22,7 @@ This blueprint also demonstrates how to:
 
 * Configure Genesys Cloud/AWS EventBridge integration using CX as Code
 * Configure Azure to subscribe to an Event Grid topic that will post the event to an Azure Queue using the Terraform providers
-* Build and deploy a Typescript for AWS Lambda to proxy the request to the subscribed Event Grid endpoiint
+* Build and deploy a Typescript for AWS Lambda to proxy the request to the subscribed Event Grid endpoint
 
 ## Scenario
 Genesys Cloud is an event-driven platform that can publish events occurring within the platform in a near-time event stream. Currently, there are two mechanisms to consume events from Genesys Cloud:
