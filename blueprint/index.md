@@ -5,8 +5,7 @@ indextype: blueprint
 icon: blueprint
 image: images/overview.png
 category: 5	
-summary: |
-This Genesys Cloud Developer blueprint demonstrates how to use Genesys Cloud's AWS EventBridge integration and an AWS Lambda to send messages from Genesys Cloud to Amazon Event Azure Event Grid.
+summary: This Genesys Cloud Developer blueprint demonstrates how to use Genesys Cloud's AWS EventBridge integration and an AWS Lambda to send messages from Genesys Cloud to Amazon Event Azure Event Grid.
 ---
 :::{"alert":"primary","title":"About Genesys Cloud Blueprints","autoCollapse":false} 
 Genesys Cloud blueprints were built to help you jump-start building an application or integrating with a third-party partner. 
