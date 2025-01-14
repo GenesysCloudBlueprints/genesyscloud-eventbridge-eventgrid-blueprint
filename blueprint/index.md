@@ -15,7 +15,7 @@ For more details on Genesys Cloud blueprint support and practices
 please see our Genesys Cloud blueprint [FAQ](https://developer.genesys.cloud/blueprints/faq)sheet.
 :::
 
-![Send Genesys Cloud events from AWS EventBridge to Azure Event Grid](blueprint/images/overview.png "Send Genesys Cloud events from AWS EventBridge to Azure Event Grid")
+![Send Genesys Cloud events from AWS EventBridge to Azure Event Grid](images/overview.png "Send Genesys Cloud events from AWS EventBridge to Azure Event Grid")
 
 This blueprint also demonstrates how to:
 
@@ -41,7 +41,7 @@ Genesys Cloud supports only native integration with AWS resources. When most of 
 5. **Azure Queue**. An Azure message queue that holds the Genesys Cloud events passed over to Azure Event Grid
 
 :::{"alert":"Warning","title":"This blueprint is not a turnkey solution","autoCollapse":false}
-TThis blueprint is an illustrative example of how to integrate Genesys Cloud, AWS and Microsoft Azure features. It is not a turnkey solution that is resilient and secure. Ensure that you take adequate measures for error handling and security needs for your organization when you implement this blueprint solution.
+This blueprint is an illustrative example of how to integrate Genesys Cloud, AWS and Microsoft Azure features. It is not a turnkey solution that is resilient and secure. Ensure that you take adequate measures for error handling and security needs for your organization when you implement this blueprint solution.
 :::
 
 ## Solution components
@@ -232,7 +232,7 @@ Displays a table of Genesys Cloud events that are passed over.
 9. Click the event Id to display the details. 
 
 ## Additional resources
-* [GAmazon EventBridge integration](https://developer.genesys.cloud/notificationsalerts/notifications/event-bridge "Goes to the GAmazon EventBridge integration page") in the Genesys Cloud Developer Center.
+* [Amazon EventBridge integration](https://developer.genesys.cloud/notificationsalerts/notifications/event-bridge "Goes to the GAmazon EventBridge integration page") in the Genesys Cloud Developer Center.
 * [AWS EventBridge documentation](https://docs.aws.amazon.com/eventbridge/?id=docs_gateway "Goes to the AWS EventBridge documentation page") on the AWS website.
 * [Azure Event Grid documentation](https://learn.microsoft.com/en-us/azure/event-grid/ "Goes to the Microsoft Azure documentation page") on the Microsoft Azure website.
 * [Event Driven Integrations in Genesys Cloud](https://developer.genesys.cloud/blog/2021-12-02-Event-Streaming-In-Action/ "Goes to the Event Driven Integrations blog page") in the Genesys Cloud Developer Center.
